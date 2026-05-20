@@ -1,39 +1,14 @@
 package main
 
 import (
+	"cli-todo/internal/todo"
 	"encoding/json"
 	"fmt"
 	"os"
 	"strconv"
 )
 
-type Todo struct {
-	ID        int    `json:"id"`
-	Title     string `json:"title"`
-	Completed bool   `json:"completed"`
-}
-
-var todos []Todo
-
-func listTodos() {
-	for _, todo := range todos {
-		fmt.Println(todo.ID, todo.Title, todo.Completed)
-	}
-}
-
-func addTodo(title string) {
-	newTodo := Todo{
-		ID:        len(todos) + 1,
-		Title:     title,
-		Completed: false,
-	}
-
-	todos = append(todos, newTodo)
-
-	saveTodos()
-
-	fmt.Println("Todo added: ", title)
-}
+var todos []todo.Todo
 
 func saveTodos() {
 
@@ -69,54 +44,22 @@ func loadTodos() {
 	}
 }
 
-func markDone(id int) {
-
-	for i, todo := range todos {
-
-		if todo.ID == id {
-
-			todos[i].Completed = true
-
-			saveTodos()
-
-			fmt.Println("Todo marked as completed!")
-			return
-		}
-	}
-
-	fmt.Println("Todo not found")
-}
-
-func deleteTodo(id int) {
-
-	for i, todo := range todos {
-
-		if todo.ID == id {
-
-			todos = append(todos[:i], todos[i+1:]...)
-
-			saveTodos()
-
-			fmt.Println("Todos Deleted!")
-			return
-		}
-
-	}
-
-	fmt.Println("Todo not found.")
-
-}
-
 func main() {
 
 	loadTodos()
+
+	if len(os.Args) < 2 {
+		fmt.Println("Please provide a command")
+		return
+	}
 
 	command := os.Args[1]
 
 	switch command {
 
 	case "list":
-		listTodos()
+
+		todo.ListTodos(todos)
 
 	case "add":
 
@@ -127,14 +70,16 @@ func main() {
 
 		title := os.Args[2]
 
-		addTodo(title)
+		todos = todo.AddTodo(todos, title)
 
-		listTodos()
+		saveTodos()
+
+		todo.ListTodos(todos)
 
 	case "done":
 
 		if len(os.Args) < 3 {
-			fmt.Println("Please Provide Todo ID")
+			fmt.Println("Please provide Todo ID")
 			return
 		}
 
@@ -145,12 +90,14 @@ func main() {
 			return
 		}
 
-		markDone(id)
+		todos = todo.MarkDone(todos, id)
+
+		saveTodos()
 
 	case "delete":
 
 		if len(os.Args) < 3 {
-			fmt.Println("Please provide Todo ID.")
+			fmt.Println("Please provide Todo ID")
 			return
 		}
 
@@ -161,7 +108,9 @@ func main() {
 			return
 		}
 
-		deleteTodo(id)
+		todos = todo.DeleteTodo(todos, id)
+
+		saveTodos()
 
 	default:
 		fmt.Println("Unknown command")
