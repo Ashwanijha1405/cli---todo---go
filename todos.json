@@ -1,17 +1,7 @@
 [
  {
-  "ID": 2,
-  "Title": "Have Good \u0026 clean meal",
-  "Completed": false
- },
- {
-  "ID": 3,
-  "Title": "learn go",
-  "Completed": false
- },
- {
-  "ID": 4,
-  "Title": "Learn Go",
+  "ID": 1,
+  "Title": "New Task",
   "Completed": false
  }
 ]
