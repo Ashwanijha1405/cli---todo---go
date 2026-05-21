@@ -1,52 +1,16 @@
 package main
 
 import (
+	"cli-todo/internal/storage"
 	"cli-todo/internal/todo"
-	"encoding/json"
 	"fmt"
 	"os"
 	"strconv"
 )
 
-var todos []todo.Todo
-
-func saveTodos() {
-
-	data, err := json.MarshalIndent(todos, "", " ")
-
-	if err != nil {
-		fmt.Println("Error converting todos to json:", err)
-		return
-	}
-
-	err = os.WriteFile("todos.json", data, 0644)
-
-	if err != nil {
-		fmt.Println("Error writing file:", err)
-		return
-	}
-}
-
-func loadTodos() {
-
-	data, err := os.ReadFile("todos.json")
-
-	if err != nil {
-		fmt.Println("Error reading file:", err)
-		return
-	}
-
-	err = json.Unmarshal(data, &todos)
-
-	if err != nil {
-		fmt.Println("Error decoding file:", err)
-		return
-	}
-}
-
 func main() {
 
-	loadTodos()
+	todos := storage.LoadTodos()
 
 	if len(os.Args) < 2 {
 		fmt.Println("Please provide a command")
@@ -72,7 +36,7 @@ func main() {
 
 		todos = todo.AddTodo(todos, title)
 
-		saveTodos()
+		storage.SaveTodos(todos)
 
 		todo.ListTodos(todos)
 
@@ -92,7 +56,7 @@ func main() {
 
 		todos = todo.MarkDone(todos, id)
 
-		saveTodos()
+		storage.SaveTodos(todos)
 
 	case "delete":
 
@@ -110,7 +74,7 @@ func main() {
 
 		todos = todo.DeleteTodo(todos, id)
 
-		saveTodos()
+		storage.SaveTodos(todos)
 
 	default:
 		fmt.Println("Unknown command")

@@ -16,7 +16,7 @@ func ListTodos(todos []Todo) {
 
 func AddTodo(todos []Todo, title string) []Todo {
 	newTodo := Todo{
-		ID:        len(todos) + 1,
+		ID:        getNextID(todos),
 		Title:     title,
 		Completed: false,
 	}
@@ -55,4 +55,17 @@ func DeleteTodo(todos []Todo, id int) []Todo {
 
 	fmt.Println("Todo not found.")
 	return todos
+}
+
+func getNextID(todos []Todo) int {
+
+	maxID := 0
+
+	for _, todo := range todos {
+		if todo.ID > maxID {
+			maxID = todo.ID
+		}
+	}
+
+	return maxID + 1
 }
