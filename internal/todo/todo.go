@@ -1,8 +1,9 @@
 package todo
 
 import (
-	"fmt"
+	"cli-todo/internal/logger"
 	"errors"
+	"fmt"
 )
 
 type Todo struct {
@@ -12,12 +13,16 @@ type Todo struct {
 }
 
 func ListTodos(todos []Todo) {
+
+	logger.Log.Info("listing todos", "count", len(todos))
+
 	for _, todo := range todos {
 		fmt.Println(todo.ID, todo.Title, todo.Completed)
 	}
 }
 
 func AddTodo(todos []Todo, title string) []Todo {
+
 	newTodo := Todo{
 		ID:        getNextID(todos),
 		Title:     title,
@@ -26,34 +31,65 @@ func AddTodo(todos []Todo, title string) []Todo {
 
 	todos = append(todos, newTodo)
 
+	logger.Log.Info(
+		"todo created",
+		"id", newTodo.ID,
+		"title", newTodo.Title,
+	)
+
 	fmt.Println("Todo added:", title)
 
 	return todos
 }
 
 func MarkDone(todos []Todo, id int) ([]Todo, error) {
+
 	for i, todo := range todos {
+
 		if todo.ID == id {
+
 			todos[i].Completed = true
+
+			logger.Log.Info(
+				"todo marked completed",
+				"id", id,
+			)
 
 			return todos, nil
 		}
 	}
 
-	return todos, errors.New("Todo not found")
+	logger.Log.Error(
+		"todo not found for completion",
+		"id", id,
+	)
+
+	return todos, errors.New("todo not found")
 }
 
 func DeleteTodo(todos []Todo, id int) ([]Todo, error) {
+
 	for i, todo := range todos {
+
 		if todo.ID == id {
 
 			todos = append(todos[:i], todos[i+1:]...)
 
+			logger.Log.Info(
+				"todo deleted",
+				"id", id,
+			)
+
 			return todos, nil
 		}
 	}
 
-	return todos, errors.New("Todo not found")
+	logger.Log.Error(
+		"todo not found for deletion",
+		"id", id,
+	)
+
+	return todos, errors.New("todo not found")
 }
 
 func getNextID(todos []Todo) int {
@@ -61,6 +97,7 @@ func getNextID(todos []Todo) int {
 	maxID := 0
 
 	for _, todo := range todos {
+
 		if todo.ID > maxID {
 			maxID = todo.ID
 		}
