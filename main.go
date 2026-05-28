@@ -9,7 +9,12 @@ import (
 
 func main() {
 
-	todos := storage.LoadTodos()
+	todos, err := storage.LoadTodos()
+
+    if err != nil {
+	    fmt.Println("Error loading todos:", err)
+	    return
+    }
 
 	if len(os.Args) < 2 {
 		fmt.Println("Please provide a command")
