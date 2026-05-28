@@ -5,13 +5,18 @@
   "Completed": true
  },
  {
-  "ID": 3,
-  "Title": "Learn",
-  "Completed": false
- },
- {
   "ID": 4,
   "Title": "Error handling",
   "Completed": true
+ },
+ {
+  "ID": 5,
+  "Title": "Learn Logging",
+  "Completed": false
+ },
+ {
+  "ID": 6,
+  "Title": "Build Backend",
+  "Completed": false
  }
 ]

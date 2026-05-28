@@ -2,12 +2,15 @@ package main
 
 import (
 	"cli-todo/internal/cli"
+	"cli-todo/internal/logger"
 	"cli-todo/internal/storage"
 	"fmt"
 	"os"
 )
 
 func main() {
+
+	logger.Log.Info("application started")
 
 	todos, err := storage.LoadTodos()
 
@@ -24,5 +27,6 @@ func main() {
 	command := os.Args[1]
 
 	todos = cli.HandleCommand(command, os.Args[2:], todos)
+
 
 }
