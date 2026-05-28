@@ -1,6 +1,9 @@
 package todo
 
-import "fmt"
+import (
+	"fmt"
+	"errors"
+)
 
 type Todo struct {
 	ID        int
@@ -28,33 +31,29 @@ func AddTodo(todos []Todo, title string) []Todo {
 	return todos
 }
 
-func MarkDone(todos []Todo, id int) []Todo {
+func MarkDone(todos []Todo, id int) ([]Todo, error) {
 	for i, todo := range todos {
 		if todo.ID == id {
 			todos[i].Completed = true
 
-			fmt.Println("Todo marked as completed!")
-			return todos
+			return todos, nil
 		}
 	}
 
-	fmt.Println("Todo not found")
-	return todos
+	return todos, errors.New("Todo not found")
 }
 
-func DeleteTodo(todos []Todo, id int) []Todo {
+func DeleteTodo(todos []Todo, id int) ([]Todo, error) {
 	for i, todo := range todos {
 		if todo.ID == id {
 
 			todos = append(todos[:i], todos[i+1:]...)
 
-			fmt.Println("Todo deleted!")
-			return todos
+			return todos, nil
 		}
 	}
 
-	fmt.Println("Todo not found.")
-	return todos
+	return todos, errors.New("Todo not found")
 }
 
 func getNextID(todos []Todo) int {

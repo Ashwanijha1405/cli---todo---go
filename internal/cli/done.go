@@ -24,10 +24,20 @@ func HandleDone(args []string, todos []todo.Todo) []todo.Todo {
 	}
 
 	// Business Logic Layer
-	todos = todo.MarkDone(todos, id)
+	todos, err = todo.MarkDone(todos, id)
+
+	if err != nil {
+		fmt.Println("Error:", err)
+		return todos
+	}
 
 	// Persistence Layer
-	storage.SaveTodos(todos)
+	err = storage.SaveTodos(todos)
+
+    if err != nil {
+	    fmt.Println("Error saving todos:", err)
+	    return todos
+    }
 
 	return todos
 }
