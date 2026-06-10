@@ -1,8 +1,15 @@
 package cli
 
-import "fmt"
+import (
+	"cli-todo/internal/logger"
+	"fmt"
+)
 
 func PrintHelp() {
+
+	logger.Log.Info("displaying help menu")
+
+
 	fmt.Println("Available Commands:")
 	fmt.Println("add <title>     Add a new todo")
 	fmt.Println("list            List all todos")

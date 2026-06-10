@@ -2,6 +2,7 @@ package cli
 
 import (
 	"cli-todo/internal/logger"
+	"cli-todo/internal/constants"
 	"cli-todo/internal/storage"
 	"cli-todo/internal/todo"
 	"fmt"
@@ -14,7 +15,7 @@ func HandleAdd(args []string, todos []todo.Todo) []todo.Todo {
 
 		logger.Log.Error("missing todo title for add command")
 
-		fmt.Println("Please provide todo title")
+		fmt.Println(constants.MsgProvideTodoID)
 		return todos
 	}
 

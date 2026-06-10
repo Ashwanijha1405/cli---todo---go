@@ -2,6 +2,7 @@ package cli
 
 import (
 	"cli-todo/internal/todo"
+	"cli-todo/internal/constants"
 	"fmt"
 )
 
@@ -9,19 +10,19 @@ func HandleCommand(command string, args []string, todos []todo.Todo) []todo.Todo
 
 	switch command {
 
-	case "add":
+	case constants.CommandAdd:
 		return HandleAdd(args, todos)
 
-	case "list":
+	case constants.CommandList:
 		return HandleList(todos)
 
-	case "done":
+	case constants.CommandDone:
 		return HandleDone(args, todos)
 
-	case "delete":
+	case constants.CommandDelete:
 		return HandleDelete(args, todos)
 
-	case "help":
+	case constants.CommandHelp:
 		PrintHelp()
 		return todos
 
