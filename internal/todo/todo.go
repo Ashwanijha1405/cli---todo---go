@@ -2,6 +2,7 @@ package todo
 
 import (
 	"cli-todo/internal/logger"
+	"cli-todo/internal/constants"
 	"errors"
 	"fmt"
 )
@@ -64,7 +65,7 @@ func MarkDone(todos []Todo, id int) ([]Todo, error) {
 		"id", id,
 	)
 
-	return todos, errors.New("todo not found")
+	return todos, errors.New(constants.ErrTodoNotFound)
 }
 
 func DeleteTodo(todos []Todo, id int) ([]Todo, error) {
@@ -89,7 +90,7 @@ func DeleteTodo(todos []Todo, id int) ([]Todo, error) {
 		"id", id,
 	)
 
-	return todos, errors.New("todo not found")
+	return todos, errors.New(constants.ErrTodoNotFound)
 }
 
 func getNextID(todos []Todo) int {

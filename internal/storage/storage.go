@@ -2,6 +2,7 @@ package storage
 
 import (
 	"cli-todo/internal/logger"
+	"cli-todo/internal/constants"
 	"cli-todo/internal/todo"
 	"encoding/json"
 	"os"
@@ -18,7 +19,7 @@ func SaveTodos(todos []todo.Todo) error {
 		return err
 	}
 
-	err = os.WriteFile("todos.json", data, 0644)
+	err = os.WriteFile(constants.TodosFile, data, 0644)
 
 	if err != nil {
 		logger.Log.Error("failed to write todos file", "error", err)
@@ -32,11 +33,11 @@ func SaveTodos(todos []todo.Todo) error {
 
 func LoadTodos() ([]todo.Todo, error) {
 
-	logger.Log.Info("loading todos", "file", "todos.json")
+	logger.Log.Info("loading todos", "file", constants.TodosFile)
 
 	var todos []todo.Todo
 
-	data, err := os.ReadFile("todos.json")
+	data, err := os.ReadFile(constants.TodosFile)
 
 	if err != nil {
 
