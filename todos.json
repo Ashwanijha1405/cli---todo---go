@@ -18,15 +18,5 @@
   "ID": 6,
   "Title": "Build Backend",
   "Completed": false
- },
- {
-  "ID": 7,
-  "Title": "Test",
-  "Completed": false
- },
- {
-  "ID": 8,
-  "Title": "Test",
-  "Completed": false
  }
 ]
