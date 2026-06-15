@@ -1,14 +1,13 @@
 package cli
 
 import (
-	"cli-todo/internal/logger"
 	"cli-todo/internal/constants"
-	"cli-todo/internal/storage"
+	"cli-todo/internal/logger"
 	"cli-todo/internal/todo"
 	"fmt"
 )
 
-func HandleAdd(args []string, todos []todo.Todo) []todo.Todo {
+func HandleAdd(args []string, todoService *todo.TodoService) {
 
 	// Validation Layer
 	if len(args) < 1 {
@@ -16,7 +15,7 @@ func HandleAdd(args []string, todos []todo.Todo) []todo.Todo {
 		logger.Log.Error("missing todo title for add command")
 
 		fmt.Println(constants.MsgProvideTodoID)
-		return todos
+		return
 	}
 
 	// Command Input
@@ -28,20 +27,10 @@ func HandleAdd(args []string, todos []todo.Todo) []todo.Todo {
 	)
 
 	// Business Logic Layer
-	todos = todo.AddTodo(todos, title)
-
-	// Persistence Layer
-	err := storage.SaveTodos(todos)
-
+	_, err := todoService.AddTodo(title)
 	if err != nil {
-
-		logger.Log.Error(
-			"failed to save todos after add",
-			"error", err,
-		)
-
 		fmt.Println("Error saving todos:", err)
-		return todos
+		return
 	}
 
 	logger.Log.Info(
@@ -50,7 +39,8 @@ func HandleAdd(args []string, todos []todo.Todo) []todo.Todo {
 	)
 
 	// Presentation Layer
-	todo.ListTodos(todos)
-
-	return todos
+	_, err = todoService.ListTodos()
+	if err != nil {
+		fmt.Println("Error listing todos:", err)
+	}
 }

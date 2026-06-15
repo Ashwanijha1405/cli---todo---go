@@ -1,36 +1,41 @@
 package todo
 
 import (
-	"cli-todo/internal/logger"
 	"cli-todo/internal/constants"
+	"cli-todo/internal/logger"
+	"cli-todo/internal/repository"
 	"errors"
 	"fmt"
 )
 
-type Todo struct {
-	ID        int
-	Title     string
-	Completed bool
+type TodoService struct {
+	repo repository.TodoRepository
 }
 
-func ListTodos(todos []Todo) {
+func NewTodoService(repo repository.TodoRepository) *TodoService {
+	return &TodoService{repo: repo}
+}
+
+func (s *TodoService) ListTodos() ([]repository.Todo, error) {
+	todos, err := s.repo.GetAll()
+	if err != nil {
+		return nil, err
+	}
 
 	logger.Log.Info("listing todos", "count", len(todos))
 
 	for _, todo := range todos {
 		fmt.Println(todo.ID, todo.Title, todo.Completed)
 	}
+
+	return todos, nil
 }
 
-func AddTodo(todos []Todo, title string) []Todo {
-
-	newTodo := Todo{
-		ID:        getNextID(todos),
-		Title:     title,
-		Completed: false,
+func (s *TodoService) AddTodo(title string) (repository.Todo, error) {
+	newTodo, err := s.repo.Create(title)
+	if err != nil {
+		return repository.Todo{}, err
 	}
-
-	todos = append(todos, newTodo)
 
 	logger.Log.Info(
 		"todo created",
@@ -40,69 +45,59 @@ func AddTodo(todos []Todo, title string) []Todo {
 
 	fmt.Println("Todo added:", title)
 
-	return todos
+	return newTodo, nil
 }
 
-func MarkDone(todos []Todo, id int) ([]Todo, error) {
+func (s *TodoService) MarkDone(id int) error {
+	todos, err := s.repo.GetAll()
+	if err != nil {
+		return err
+	}
 
-	for i, todo := range todos {
-
-		if todo.ID == id {
-
+	var foundTodo *repository.Todo
+	for i := range todos {
+		if todos[i].ID == id {
 			todos[i].Completed = true
-
-			logger.Log.Info(
-				"todo marked completed",
-				"id", id,
-			)
-
-			return todos, nil
+			foundTodo = &todos[i]
+			break
 		}
 	}
 
-	logger.Log.Error(
-		"todo not found for completion",
+	if foundTodo == nil {
+		logger.Log.Error(
+			"todo not found for completion",
+			"id", id,
+		)
+		return errors.New(constants.ErrTodoNotFound)
+	}
+
+	err = s.repo.Update(*foundTodo)
+	if err != nil {
+		return err
+	}
+
+	logger.Log.Info(
+		"todo marked completed",
 		"id", id,
 	)
 
-	return todos, errors.New(constants.ErrTodoNotFound)
+	return nil
 }
 
-func DeleteTodo(todos []Todo, id int) ([]Todo, error) {
-
-	for i, todo := range todos {
-
-		if todo.ID == id {
-
-			todos = append(todos[:i], todos[i+1:]...)
-
-			logger.Log.Info(
-				"todo deleted",
-				"id", id,
-			)
-
-			return todos, nil
-		}
+func (s *TodoService) DeleteTodo(id int) error {
+	err := s.repo.Delete(id)
+	if err != nil {
+		logger.Log.Error(
+			"todo not found for deletion",
+			"id", id,
+		)
+		return err
 	}
 
-	logger.Log.Error(
-		"todo not found for deletion",
+	logger.Log.Info(
+		"todo deleted",
 		"id", id,
 	)
 
-	return todos, errors.New(constants.ErrTodoNotFound)
-}
-
-func getNextID(todos []Todo) int {
-
-	maxID := 0
-
-	for _, todo := range todos {
-
-		if todo.ID > maxID {
-			maxID = todo.ID
-		}
-	}
-
-	return maxID + 1
+	return nil
 }

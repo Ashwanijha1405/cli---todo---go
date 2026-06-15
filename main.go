@@ -2,8 +2,10 @@ package main
 
 import (
 	"cli-todo/internal/cli"
+	"cli-todo/internal/constants"
 	"cli-todo/internal/logger"
 	"cli-todo/internal/storage"
+	"cli-todo/internal/todo"
 	"fmt"
 	"os"
 )
@@ -12,12 +14,11 @@ func main() {
 
 	logger.Log.Info("application started")
 
-	todos, err := storage.LoadTodos()
+	// Instantiate the repository (low-level detail)
+	repo := storage.NewJSONRepository(constants.TodosFile)
 
-    if err != nil {
-	    fmt.Println("Error loading todos:", err)
-	    return
-    }
+	// Inject the repository into the service (high-level logic)
+	todoService := todo.NewTodoService(repo)
 
 	if len(os.Args) < 2 {
 		fmt.Println("Please provide a command")
@@ -26,7 +27,5 @@ func main() {
 
 	command := os.Args[1]
 
-	todos = cli.HandleCommand(command, os.Args[2:], todos)
-
-
+	cli.HandleCommand(command, os.Args[2:], todoService)
 }

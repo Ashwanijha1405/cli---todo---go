@@ -1,10 +1,14 @@
 package cli
 
-import "cli-todo/internal/todo"
+import (
+	"cli-todo/internal/todo"
+	"fmt"
+)
 
-func HandleList(todos []todo.Todo) []todo.Todo {
+func HandleList(todoService *todo.TodoService) {
 
-	todo.ListTodos(todos)
-
-	return todos
+	_, err := todoService.ListTodos()
+	if err != nil {
+		fmt.Println("Error listing todos:", err)
+	}
 }
