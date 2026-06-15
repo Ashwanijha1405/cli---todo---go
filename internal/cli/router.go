@@ -1,34 +1,33 @@
 package cli
 
 import (
+	"cli-todo/internal/constants"
 	"cli-todo/internal/todo"
 	"cli-todo/internal/constants"
 	"fmt"
 )
 
-func HandleCommand(command string, args []string, todos []todo.Todo) []todo.Todo {
+func HandleCommand(command string, args []string, todoService *todo.TodoService) {
 
 	switch command {
 
 	case constants.CommandAdd:
-		return HandleAdd(args, todos)
+		HandleAdd(args, todoService)
 
 	case constants.CommandList:
-		return HandleList(todos)
+		HandleList(todoService)
 
 	case constants.CommandDone:
-		return HandleDone(args, todos)
+		HandleDone(args, todoService)
 
 	case constants.CommandDelete:
-		return HandleDelete(args, todos)
+		HandleDelete(args, todoService)
 
 	case constants.CommandHelp:
 		PrintHelp()
-		return todos
 
 	default:
 		fmt.Println("Unknown command:", command)
 		PrintHelp()
-		return todos
 	}
 }

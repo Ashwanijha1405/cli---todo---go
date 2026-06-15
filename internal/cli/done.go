@@ -1,19 +1,18 @@
 package cli
 
 import (
-	"cli-todo/internal/storage"
 	"cli-todo/internal/constants"
 	"cli-todo/internal/todo"
 	"fmt"
 	"strconv"
 )
 
-func HandleDone(args []string, todos []todo.Todo) []todo.Todo {
+func HandleDone(args []string, todoService *todo.TodoService) {
 
 	// Validation Layer
 	if len(args) < 1 {
 		fmt.Println(constants.MsgProvideTodoID)
-		return todos
+		return
 	}
 
 	// Input Parsing
@@ -21,24 +20,14 @@ func HandleDone(args []string, todos []todo.Todo) []todo.Todo {
 
 	if err != nil {
 		fmt.Println(constants.MsgInvalidTodoID)
-		return todos
+		return
 	}
 
-	// Business Logic Layer
-	todos, err = todo.MarkDone(todos, id)
+	// Business Logic Layer & Persistence (via Service)
+	err = todoService.MarkDone(id)
 
 	if err != nil {
 		fmt.Println("Error:", err)
-		return todos
+		return
 	}
-
-	// Persistence Layer
-	err = storage.SaveTodos(todos)
-
-    if err != nil {
-	    fmt.Println("Error saving todos:", err)
-	    return todos
-    }
-
-	return todos
 }
