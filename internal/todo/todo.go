@@ -43,6 +43,12 @@ func (s *TodoService) AddTodo(title string) (repository.Todo, error) {
 		"title", newTodo.Title,
 	)
 
+	logger.Log.Info(
+		"todo created",
+		"id", newTodo.ID,
+		"title", newTodo.Title,
+	)
+
 	fmt.Println("Todo added:", title)
 
 	return newTodo, nil

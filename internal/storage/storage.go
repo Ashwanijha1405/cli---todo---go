@@ -58,6 +58,12 @@ func (r *JSONRepository) save(todos []repository.Todo) error {
 	}
 
 	logger.Log.Info("todos saved successfully")
+		logger.Log.Error("failed to write todos file", "error", err)
+		return err
+	}
+
+	logger.Log.Info("todos saved successfully")
+
 	return nil
 }
 
