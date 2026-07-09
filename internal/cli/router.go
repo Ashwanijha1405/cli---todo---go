@@ -3,7 +3,6 @@ package cli
 import (
 	"cli-todo/internal/constants"
 	"cli-todo/internal/todo"
-	"cli-todo/internal/constants"
 	"fmt"
 )
 

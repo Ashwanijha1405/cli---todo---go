@@ -43,28 +43,22 @@ func (r *JSONRepository) GetAll() ([]repository.Todo, error) {
 }
 
 func (r *JSONRepository) save(todos []repository.Todo) error {
-	logger.Log.Info("saving todos", "count", len(todos))
+    logger.Log.Info("saving todos", "count", len(todos))
 
-	data, err := json.MarshalIndent(todos, "", " ")
-	if err != nil {
-		logger.Log.Error("failed to convert todos to json", "error", err)
-		return err
-	}
+    data, err := json.MarshalIndent(todos, "", " ")
+    if err != nil {
+        logger.Log.Error("failed to convert todos to json", "error", err)
+        return err
+    }
 
-	err = os.WriteFile(r.filePath, data, 0644)
-	if err != nil {
-		logger.Log.Error("failed to write todos file", "error", err)
-		return err
-	}
+    err = os.WriteFile(r.filePath, data, 0644)
+    if err != nil {
+        logger.Log.Error("failed to write todos file", "error", err)
+        return err
+    }
 
-	logger.Log.Info("todos saved successfully")
-		logger.Log.Error("failed to write todos file", "error", err)
-		return err
-	}
-
-	logger.Log.Info("todos saved successfully")
-
-	return nil
+    logger.Log.Info("todos saved successfully")
+    return nil
 }
 
 func (r *JSONRepository) Create(title string) (repository.Todo, error) {
