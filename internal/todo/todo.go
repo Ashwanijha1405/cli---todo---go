@@ -3,20 +3,20 @@ package todo
 import (
 	"cli-todo/internal/constants"
 	"cli-todo/internal/logger"
-	"cli-todo/internal/repository"
+	"cli-todo/internal/repository/contract"
 	"errors"
 	"fmt"
 )
 
 type TodoService struct {
-	repo repository.TodoRepository
+	repo contract.TodoRepository
 }
 
-func NewTodoService(repo repository.TodoRepository) *TodoService {
+func NewTodoService(repo contract.TodoRepository) *TodoService {
 	return &TodoService{repo: repo}
 }
 
-func (s *TodoService) ListTodos() ([]repository.Todo, error) {
+func (s *TodoService) ListTodos() ([]contract.Todo, error) {
 	todos, err := s.repo.GetAll()
 	if err != nil {
 		return nil, err
@@ -31,10 +31,10 @@ func (s *TodoService) ListTodos() ([]repository.Todo, error) {
 	return todos, nil
 }
 
-func (s *TodoService) AddTodo(title string) (repository.Todo, error) {
+func (s *TodoService) AddTodo(title string) (contract.Todo, error) {
 	newTodo, err := s.repo.Create(title)
 	if err != nil {
-		return repository.Todo{}, err
+		return contract.Todo{}, err
 	}
 
 	logger.Log.Info(
@@ -60,7 +60,7 @@ func (s *TodoService) MarkDone(id int) error {
 		return err
 	}
 
-	var foundTodo *repository.Todo
+	var foundTodo *contract.Todo
 	for i := range todos {
 		if todos[i].ID == id {
 			todos[i].Completed = true

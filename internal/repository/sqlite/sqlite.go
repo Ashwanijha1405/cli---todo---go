@@ -2,7 +2,7 @@ package sqlite
 
 import (
     "database/sql"
-	"cli-todo/internal/repository"
+	"cli-todo/internal/repository/contract"
 	 _ "modernc.org/sqlite"
 	"errors"
 	"cli-todo/internal/constants"
@@ -43,7 +43,7 @@ func (r *SQLiteRepository) init() error {
 	return err
 }
 
-func (r *SQLiteRepository) Create(title string) (repository.Todo, error) {
+func (r *SQLiteRepository) Create(title string) (contract.Todo, error) {
 	query := `
 	INSERT INTO todos(title, completed)
 	VALUES(?, ?)
@@ -51,22 +51,22 @@ func (r *SQLiteRepository) Create(title string) (repository.Todo, error) {
 
 	result, err := r.db.Exec(query, title, false)
 	if err != nil {
-		return repository.Todo{}, err
+		return contract.Todo{}, err
 	}
 
 	id, err := result.LastInsertId()
 	if err != nil {
-		return repository.Todo{}, err
+		return contract.Todo{}, err
 	}
 
-	return repository.Todo{
+	return contract.Todo{
 		ID:        int(id),
 		Title:     title,
 		Completed: false,
 	}, nil
 }
 
-func (r *SQLiteRepository) GetAll() ([]repository.Todo, error) {
+func (r *SQLiteRepository) GetAll() ([]contract.Todo, error) {
 	query := `
 	SELECT id, title, completed
 	FROM todos
@@ -79,10 +79,10 @@ func (r *SQLiteRepository) GetAll() ([]repository.Todo, error) {
 	}
 	defer rows.Close()
 
-	var todos []repository.Todo
+	var todos []contract.Todo
 
 	for rows.Next() {
-		var todo repository.Todo
+		var todo contract.Todo
 
 		err := rows.Scan(&todo.ID, &todo.Title, &todo.Completed)
 		if err != nil {
@@ -99,7 +99,7 @@ func (r *SQLiteRepository) GetAll() ([]repository.Todo, error) {
 	return todos, nil
 }
 
-func (r *SQLiteRepository) Update(todo repository.Todo) error {
+func (r *SQLiteRepository) Update(todo contract.Todo) error {
 	query := `
 	UPDATE todos
 	SET title = ?, completed = ?
@@ -147,4 +147,4 @@ func (r *SQLiteRepository) Delete(id int) error {
 }
 
 
-var _ repository.TodoRepository = (*SQLiteRepository)(nil)
+var _ contract.TodoRepository = (*SQLiteRepository)(nil)
