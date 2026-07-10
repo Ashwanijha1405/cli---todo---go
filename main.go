@@ -3,7 +3,7 @@ package main
 import (
 	"cli-todo/internal/cli"
 	"cli-todo/internal/logger"
-	"cli-todo/internal/repository/sqlite"
+	"cli-todo/internal/repository"
 	"cli-todo/internal/todo"
 	"cli-todo/internal/config"
 	"fmt"
@@ -21,7 +21,7 @@ func main() {
 	logger.Log.Info("application started")
 
 	// Instantiate the repository
-	repo, err := sqlite.NewSQLiteRepository(cfg.DBPath)
+	repo, err := repository.NewRepository(cfg)
 	if err != nil {
 		log.Fatal(err)
 	}

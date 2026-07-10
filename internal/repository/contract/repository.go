@@ -1,4 +1,4 @@
-package repository
+package contract
 
 type Todo struct {
 	ID        int    `json:"ID"`

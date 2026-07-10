@@ -1,9 +1,9 @@
-package storage
+package json
 
 import (
 	"cli-todo/internal/constants"
 	"cli-todo/internal/logger"
-	"cli-todo/internal/repository"
+	"cli-todo/internal/repository/contract"
 	"encoding/json"
 	"errors"
 	"os"
@@ -17,10 +17,10 @@ func NewJSONRepository(filePath string) *JSONRepository {
 	return &JSONRepository{filePath: filePath}
 }
 
-func (r *JSONRepository) GetAll() ([]repository.Todo, error) {
+func (r *JSONRepository) GetAll() ([]contract.Todo, error) {
 	logger.Log.Info("loading todos", "file", r.filePath)
 
-	var todos []repository.Todo
+	var todos []contract.Todo
 
 	data, err := os.ReadFile(r.filePath)
 	if err != nil {
@@ -42,7 +42,7 @@ func (r *JSONRepository) GetAll() ([]repository.Todo, error) {
 	return todos, nil
 }
 
-func (r *JSONRepository) save(todos []repository.Todo) error {
+func (r *JSONRepository) save(todos []contract.Todo) error {
     logger.Log.Info("saving todos", "count", len(todos))
 
     data, err := json.MarshalIndent(todos, "", " ")
@@ -61,10 +61,10 @@ func (r *JSONRepository) save(todos []repository.Todo) error {
     return nil
 }
 
-func (r *JSONRepository) Create(title string) (repository.Todo, error) {
+func (r *JSONRepository) Create(title string) (contract.Todo, error) {
 	todos, err := r.GetAll()
 	if err != nil {
-		return repository.Todo{}, err
+		return contract.Todo{}, err
 	}
 
 	maxID := 0
@@ -74,7 +74,7 @@ func (r *JSONRepository) Create(title string) (repository.Todo, error) {
 		}
 	}
 
-	newTodo := repository.Todo{
+	newTodo := contract.Todo{
 		ID:        maxID + 1,
 		Title:     title,
 		Completed: false,
@@ -83,13 +83,13 @@ func (r *JSONRepository) Create(title string) (repository.Todo, error) {
 	todos = append(todos, newTodo)
 	err = r.save(todos)
 	if err != nil {
-		return repository.Todo{}, err
+		return contract.Todo{}, err
 	}
 
 	return newTodo, nil
 }
 
-func (r *JSONRepository) Update(updatedTodo repository.Todo) error {
+func (r *JSONRepository) Update(updatedTodo contract.Todo) error {
 	todos, err := r.GetAll()
 	if err != nil {
 		return err
@@ -118,7 +118,7 @@ func (r *JSONRepository) Delete(id int) error {
 	}
 
 	found := false
-	var updatedTodos []repository.Todo
+	var updatedTodos []contract.Todo
 	for _, t := range todos {
 		if t.ID == id {
 			found = true

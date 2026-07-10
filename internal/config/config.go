@@ -27,8 +27,9 @@ func Load() (Config, error) {
 	if logLevel == "" {
 		logLevel = "info"
 	}
-
-	if storageType != "sqlite" {
+    
+	//validation 
+	if storageType != "sqlite" && storageType !="json" {
 	return Config{}, errors.New("unsupported storage type: " + storageType)
     }
 
